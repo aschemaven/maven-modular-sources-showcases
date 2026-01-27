@@ -1,0 +1,66 @@
+= Java Modules Showcases with Apache Maven 4
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+This repository contains companion code for a blog series about Java Modules with https://maven.apache.org/[Apache Maven] 4's new _module source hierarchy_.
+
+== Blog Articles
+
+The series consists of four articles.
+Each article lives on the branch where the code at that state is available, so `git checkout <branch>` gives you a working tree with both the article and runnable code.
+
+[cols="1,3",options="header"]
+|===
+| Branch | Article
+
+| `main`
+| xref:src/docs/01-modular-basics.adoc[Your First Modular Java Project with Apache Maven 4]
+
+| `blog-1-homework`
+| Solving Resource and Packaging Challenges
+
+| `blog-2-encapsulation`
+| Encapsulation &#8211; Hiding Implementation Details
+
+| `blog-3-api-impl`
+| Separating contract and implementation
+|===
+
+The full rendered site with all articles lives at https://maven.aschemann.net/blog/.
+
+== Layout
+
+[source]
+----
+src/
+├── net.aschemann.maven.demos.analyzer.core/   Java module: domain model + services
+├── net.aschemann.maven.demos.analyzer.cli/    Java module: command-line interface
+└── docs/                                       AsciiDoc blog articles (one file per article)
+pom.xml                                         Maven 4 module source hierarchy
+----
+
+Blog articles use `include::` directives to pull tagged regions directly from the real source files (`pom.xml`, `module-info.java`, etc.), so what you read in the article always matches the code you can compile and run.
+
+== Building
+
+[source,bash]
+----
+./mvnw compile
+./mvnw prepare-package
+java --module-path "target/classes:target/lib" \
+     --module net.aschemann.maven.demos.analyzer.cli/net.aschemann.maven.demos.analyzer.cli.AnalyzerCommand \
+     README.adoc
+----
+
+== License
+
+Apache License 2.0
+
+'''
+
+Apache Maven and Maven are trademarks of the https://www.apache.org/[Apache Software Foundation].

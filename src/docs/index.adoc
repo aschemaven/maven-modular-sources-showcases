@@ -1,0 +1,26 @@
+= Maven 4 Module Source Hierarchy
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+A blog series exploring Java Modules with Apache Maven 4's new module source hierarchy.
+
+== Blog Articles
+
+. xref:01-modular-basics.adoc[Your First Modular Java Project with Apache Maven 4]
+
+The remaining articles in the series live on their corresponding branches, each of which also contains the source code at the state described by that article:
+
+* `blog-1-homework` — Solving Resource and Packaging Challenges
+* `blog-2-encapsulation` — Encapsulation – Hiding Implementation Details
+* `blog-3-api-impl` — Separating contract and implementation
+
+The full rendered site with all articles lives at https://maven.aschemann.net/blog/.
+
+'''
+
+Apache Maven and Maven are trademarks of the https://www.apache.org/[Apache Software Foundation].
