@@ -90,14 +90,14 @@ With Maven 4's `modelVersion` 4.1.0, you can declare multiple Java modules using
 
 [source,xml]
 ----
-        <sources>
-            <source>
-                <module>net.aschemann.maven.demos.analyzer.core</module> <!--1-->
-            </source>
-            <source>
-                <module>net.aschemann.maven.demos.analyzer.cli</module> <!--2-->
-            </source>
-        </sources>
+<sources>
+    <source>
+        <module>net.aschemann.maven.demos.analyzer.core</module> <!--1-->
+    </source>
+    <source>
+        <module>net.aschemann.maven.demos.analyzer.cli</module> <!--2-->
+    </source>
+</sources>
 ----
 <1> The core module containing domain model and services
 <2> The CLI module providing the command-line interface

@@ -12,10 +12,10 @@ A blog series exploring Java Modules with Apache Maven 4's new module source hie
 == Blog Articles
 
 . xref:01-modular-basics.adoc[Your First Modular Java Project with Apache Maven 4]
+. xref:02-modular-basics-homework.adoc[Solving Resource and Packaging Challenges]
 
 The remaining articles in the series live on their corresponding branches, each of which also contains the source code at the state described by that article:
 
-* `blog-1-homework` — Solving Resource and Packaging Challenges
 * `blog-2-encapsulation` — Encapsulation – Hiding Implementation Details
 * `blog-3-api-impl` — Separating contract and implementation
 

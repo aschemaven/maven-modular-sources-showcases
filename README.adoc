@@ -22,7 +22,7 @@ Each article lives on the branch where the code at that state is available, so `
 | xref:src/docs/01-modular-basics.adoc[Your First Modular Java Project with Apache Maven 4]
 
 | `blog-1-homework`
-| Solving Resource and Packaging Challenges
+| xref:src/docs/02-modular-basics-homework.adoc[Solving Resource and Packaging Challenges]
 
 | `blog-2-encapsulation`
 | Encapsulation &#8211; Hiding Implementation Details

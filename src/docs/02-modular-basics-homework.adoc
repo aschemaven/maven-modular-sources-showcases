@@ -1,0 +1,279 @@
+= Solving Resource and Packaging Challenges
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:author: Gerd Aschemann
+:revdate: 2026-02-26
+:source-highlighter: rouge
+:icons: font
+
+[.lead]
+In the xref:01-modular-basics.adoc[previous article], we left you with two homework assignments.
+This follow-up explains why things don't work out of the box and provides workarounds until https://maven.apache.org/[Apache Maven] 4 fully supports these features.
+
+== The Homework Challenges
+
+If you tried the homework from the previous article, you likely encountered two issues:
+
+. *Missing log output* – The application runs but doesn't show the expected logging messages
+. *JAR packaging problems* - Running `./mvnw package` creates a single JAR that doesn't work as expected on the module path
+
+Both issues stem from the fact that Maven 4's module source hierarchy is still evolving.
+While the https://maven.apache.org/plugins/maven-compiler-plugin-4.x/modules.html[Maven Compiler Plugin] (version 4.0.0-beta-3) already supports this new structure, other parts of the build lifecycle haven't caught up yet.
+
+== Issue 1: Missing Resources
+
+=== What's Happening?
+
+When you run the application after `./mvnw compile`, you might notice that Log4j falls back to its https://logging.apache.org/log4j/2.x/manual/configuration.html#automatic-configuration[default configuration] instead of using our custom `log4j2.xml`.
+
+Looking at the source structure:
+
+----
+src/net.aschemann.maven.demos.analyzer.cli/
+├── main/
+│   ├── java/
+│   │   └── ...
+│   └── resources/
+│       └── log4j2.xml  <1>
+----
+<1> Our Log4j configuration file
+
+And the compiled output:
+
+----
+target/classes/
+├── net.aschemann.maven.demos.analyzer.core/
+│   └── ...
+└── net.aschemann.maven.demos.analyzer.cli/
+    └── net/aschemann/maven/demos/analyzer/cli/
+        └── AnalyzerCommand.class  <1>
+----
+<1> Notice: no `log4j2.xml` here.
+
+The `log4j2.xml` file is missing from the compiled output.
+
+=== The Hint in Maven's Output
+
+If you watch the Maven output carefully during `./mvnw compile`, you'll notice these messages:
+
+[source,text]
+----
+[INFO] --- resources:3.3.1:resources (default-resources) @ analyzer ---
+[INFO] skip non existing resourceDirectory .../src/main/resources
+[INFO] skip non existing resourceDirectory .../src/main/resources-filtered
+----
+
+This is the hint: Maven's resources plugin looks for the traditional `src/main/resources/` directory, which doesn't exist in our project.
+It completely ignores our module-specific resource directories.
+
+=== Why It Doesn't Work
+
+Maven's https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html[standard directory layout] expects resources in `src/main/resources/`.
+The xref:01-modular-basics.adoc#_the_module_source_hierarchy[module source hierarchy] places resources in `src/<module>/main/resources/`, but Maven's core resource handling doesn't yet recognize this convention.
+
+You can track the fix in https://github.com/apache/maven/pull/11505[Maven Core PR 11505].
+
+[NOTE]
+====
+The Maven team already merged the fixes into the `master` branch, which will become Maven 4.1.
+For Maven 4.0 (e.g., 4.0.0-rc-6), the team needs to backport these changes to the 4.0.x branch.
+Then it will eventually become part of the next Maven release.
+====
+
+=== The Workaround
+
+Until the Maven team releases the fix, we explicitly copy resources using the maven-resources-plugin:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-resources-plugin</artifactId>
+    <version>3.3.1</version>
+    <executions>
+        <execution>
+            <id>copy-cli-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+                <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>${project.build.outputDirectory}/net.aschemann.maven.demos.analyzer.cli</outputDirectory> <!--1-->
+                <resources>
+                    <resource>
+                        <directory>src/net.aschemann.maven.demos.analyzer.cli/main/resources</directory> <!--2-->
+                    </resource>
+                </resources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
+<1> Copy to the module's output directory
+<2> From the module's resource directory
+
+After applying this workaround, run `./mvnw compile` again and verify:
+
+[source,bash]
+----
+ls target/classes/net.aschemann.maven.demos.analyzer.cli/log4j2.xml
+----
+
+Now the application finds the Log4j configuration and logging works as expected.
+
+== Issue 2: JAR Packaging
+
+=== What's Happening?
+
+When you run `./mvnw package`, Maven creates a single JAR file:
+
+----
+target/
+└── analyzer-1.0.0-SNAPSHOT.jar
+----
+
+If you try to use this JAR on the module path:
+
+[source,bash]
+----
+java --module-path "target/analyzer-1.0.0-SNAPSHOT.jar:target/lib" \
+     --module net.aschemann.maven.demos.analyzer.cli/...
+----
+
+You'll get an error because the JAR contains *both* modules combined, which violates Java Module System rules.
+According to the https://docs.oracle.com/en/java/javase/17/docs/specs/jar/jar.html#modular-jar-files[JAR File Specification], a modular JAR must contain exactly one `module-info.class` at its root.
+
+=== Why It Doesn't Work
+
+Maven's JAR plugin traditionally creates one JAR per Maven module (Maven 3).
+With the module source hierarchy, we have one Maven project but multiple Java modules.
+The default behavior packages everything in `target/classes/` into a single JAR, mixing all contained Java modules.
+
+This creates a broken JAR:
+
+----
+analyzer-1.0.0-SNAPSHOT.jar
+├── net.aschemann.maven.demos.analyzer.core/
+│   ├── module-info.class  <-- First module descriptor
+│   └── ...
+└── net.aschemann.maven.demos.analyzer.cli/
+    ├── module-info.class  <-- Second module descriptor (conflict!)
+    └── ...
+----
+
+The fix requires changes to both https://github.com/apache/maven/pull/11549[Maven Core PR 11549] and https://github.com/apache/maven-jar-plugin/pull/508[JAR Plugin PR 508].
+
+=== The Workaround
+
+Until the Maven team releases the fix, we configure the JAR plugin to create separate JARs for each Java module:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>3.4.2</version>
+    <executions>
+        <execution>
+            <id>default-jar</id>
+            <phase>none</phase> <!--1-->
+        </execution>
+        <execution>
+            <id>jar-core</id>
+            <phase>package</phase>
+            <goals>
+                <goal>jar</goal>
+            </goals>
+            <configuration>
+                <classesDirectory>${project.build.outputDirectory}/net.aschemann.maven.demos.analyzer.core</classesDirectory> <!--2-->
+                <classifier>core</classifier> <!--3-->
+            </configuration>
+        </execution>
+        <execution>
+            <id>jar-cli</id>
+            <phase>package</phase>
+            <goals>
+                <goal>jar</goal>
+            </goals>
+            <configuration>
+                <classesDirectory>${project.build.outputDirectory}/net.aschemann.maven.demos.analyzer.cli</classesDirectory>
+                <classifier>cli</classifier>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+----
+<1> Disable the default JAR creation
+<2> Each execution packages one Java module's classes
+<3> The current JAR plugin requires classifiers to distinguish the respective artifact for each module
+
+After `./mvnw package`, you'll have:
+
+----
+target/
+├── analyzer-1.0.0-SNAPSHOT-core.jar
+└── analyzer-1.0.0-SNAPSHOT-cli.jar
+----
+
+=== Running from JARs
+
+Now you can run the application from the JARs:
+
+[source,bash]
+----
+java --module-path "target/analyzer-1.0.0-SNAPSHOT-core.jar:\
+target/analyzer-1.0.0-SNAPSHOT-cli.jar:\
+target/lib" \
+  --module net.aschemann.maven.demos.analyzer.cli/net.aschemann.maven.demos.analyzer.cli.AnalyzerCommand \
+  README.*
+----
+
+[CAUTION]
+====
+The classifier suffix (`-core`, `-cli`) is a limitation of the current JAR plugin.
+Once the Maven team releases PR 508, you'll be able to create properly named JARs like `analyzer-core-1.0.0-SNAPSHOT.jar` without classifiers.
+====
+
+== Source Code
+
+We committed the above changes to the sample source code repository on https://github.com/aschemaven/maven-modular-sources-showcases[GitHub].
+Clone it and switch to branch `blog-1-homework`:
+
+[source,bash]
+----
+git clone https://github.com/aschemaven/maven-modular-sources-showcases # unless already done
+cd maven-modular-sources-showcases
+git checkout blog-1-homework
+----
+
+== Summary
+
+Maven 4's module source hierarchy is a powerful feature, but it's still maturing.
+The two workarounds we've shown address:
+
+|===
+|Issue |Cause |Workaround |Tracking
+
+|Missing resources
+|Maven doesn't copy `src/<module>/main/resources/` automatically
+|Explicit maven-resources-plugin configuration
+|https://github.com/apache/maven/pull/11505[PR 11505]
+
+|Broken JAR packaging
+|Single JAR contains multiple Java modules
+|Explicit maven-jar-plugin executions per module
+|https://github.com/apache/maven/pull/11549[PR 11549], https://github.com/apache/maven-jar-plugin/pull/508[PR 508]
+|===
+
+These workarounds will become unnecessary once the respective Maven releases include the fixes.
+We'll update this blog series when that happens.
+
+'''
+
+Apache Maven and Maven are trademarks of the https://www.apache.org/[Apache Software Foundation].
+
