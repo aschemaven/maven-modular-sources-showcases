@@ -25,7 +25,7 @@ Each article lives on the branch where the code at that state is available, so `
 | xref:src/docs/02-modular-basics-homework.adoc[Solving Resource and Packaging Challenges]
 
 | `blog-2-encapsulation`
-| Encapsulation &#8211; Hiding Implementation Details
+| xref:src/docs/03-encapsulation.adoc[Encapsulation &#8211; Hiding Implementation Details]
 
 | `blog-3-api-impl`
 | Separating contract and implementation

@@ -9,5 +9,6 @@ module net.aschemann.maven.demos.analyzer.core {
 
     exports net.aschemann.maven.demos.analyzer.core.model; // <2>
     exports net.aschemann.maven.demos.analyzer.core.service; // <2>
+    // Note: net.aschemann.maven.demos.analyzer.core.internal is NOT exported // <3>
 }
 // end::module-info[]
