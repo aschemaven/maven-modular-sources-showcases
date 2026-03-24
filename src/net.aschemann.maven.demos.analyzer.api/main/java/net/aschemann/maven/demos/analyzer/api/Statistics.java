@@ -1,4 +1,4 @@
-package net.aschemann.maven.demos.analyzer.core.model;
+package net.aschemann.maven.demos.analyzer.api;
 
 import java.util.List;
 import java.util.Map;

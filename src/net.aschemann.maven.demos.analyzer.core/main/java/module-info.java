@@ -1,14 +1,14 @@
 /**
  * Core module for text analysis.
  * <p>
- * This module provides the domain model and analysis services.
+ * This module provides the analysis services and implementation.
  */
 // tag::module-info[]
 module net.aschemann.maven.demos.analyzer.core {
-    requires org.apache.logging.log4j; // <1>
+    requires transitive net.aschemann.maven.demos.analyzer.api; // <1>
+    requires org.apache.logging.log4j; // <2>
 
-    exports net.aschemann.maven.demos.analyzer.core.model; // <2>
-    exports net.aschemann.maven.demos.analyzer.core.service; // <2>
-    // Note: net.aschemann.maven.demos.analyzer.core.internal is NOT exported // <3>
+    exports net.aschemann.maven.demos.analyzer.core.service; // <3>
+    // Note: net.aschemann.maven.demos.analyzer.core.internal is NOT exported // <4>
 }
 // end::module-info[]

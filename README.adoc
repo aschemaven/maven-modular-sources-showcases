@@ -28,7 +28,7 @@ Each article lives on the branch where the code at that state is available, so `
 | xref:src/docs/03-encapsulation.adoc[Encapsulation &#8211; Hiding Implementation Details]
 
 | `blog-3-api-impl`
-| Separating contract and implementation
+| xref:src/docs/04-api-and-implementation.adoc[Separating contract and implementation]
 |===
 
 The full rendered site with all articles lives at https://maven.aschemann.net/blog/.

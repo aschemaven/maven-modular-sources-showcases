@@ -1,7 +1,7 @@
 package net.aschemann.maven.demos.analyzer.core.service;
 
-import net.aschemann.maven.demos.analyzer.core.model.Document;
-import net.aschemann.maven.demos.analyzer.core.model.Statistics;
+import net.aschemann.maven.demos.analyzer.api.Document;
+import net.aschemann.maven.demos.analyzer.api.Statistics;
 // tag::import-internal[]
 import net.aschemann.maven.demos.analyzer.core.internal.TextNormalizer;
 // end::import-internal[]

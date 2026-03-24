@@ -14,10 +14,7 @@ A blog series exploring Java Modules with Apache Maven 4's new module source hie
 . xref:01-modular-basics.adoc[Your First Modular Java Project with Apache Maven 4]
 . xref:02-modular-basics-homework.adoc[Solving Resource and Packaging Challenges]
 . xref:03-encapsulation.adoc[Encapsulation – Hiding Implementation Details]
-
-The remaining article lives on its corresponding branch, which also contains the source code at the state described by that article:
-
-* `blog-3-api-impl` — Separating contract and implementation
+. xref:04-api-and-implementation.adoc[Separating contract and implementation]
 
 The full rendered site with all articles lives at https://maven.aschemann.net/blog/.
 

@@ -1,8 +1,7 @@
 package net.aschemann.maven.demos.analyzer.cli;
 
-import net.aschemann.maven.demos.analyzer.core.model.Document;
-import net.aschemann.maven.demos.analyzer.core.model.Statistics;
-import net.aschemann.maven.demos.analyzer.core.service.DocumentReader;
+import net.aschemann.maven.demos.analyzer.api.Document;
+import net.aschemann.maven.demos.analyzer.api.Statistics;
 import net.aschemann.maven.demos.analyzer.core.service.TextAnalyzer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -53,8 +52,7 @@ public class AnalyzerCommand implements Callable<Integer> {
     @Override
     public Integer call() {
         try {
-            DocumentReader reader = new DocumentReader();
-            Document document = reader.read(file);
+            Document document = Document.fromPath(file);
 
             TextAnalyzer analyzer = new TextAnalyzer(topWords);
             Statistics stats = analyzer.analyze(document);

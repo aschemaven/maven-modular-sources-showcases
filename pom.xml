@@ -52,10 +52,13 @@
         <!-- tag::sources[] -->
         <sources>
             <source>
-                <module>net.aschemann.maven.demos.analyzer.core</module> <!--1-->
+                <module>net.aschemann.maven.demos.analyzer.api</module> <!--1-->
             </source>
             <source>
-                <module>net.aschemann.maven.demos.analyzer.cli</module> <!--2-->
+                <module>net.aschemann.maven.demos.analyzer.core</module> <!--2-->
+            </source>
+            <source>
+                <module>net.aschemann.maven.demos.analyzer.cli</module> <!--3-->
             </source>
         </sources>
         <!-- end::sources[] -->
@@ -125,6 +128,17 @@
                     <execution>
                         <id>default-jar</id>
                         <phase>none</phase> <!--1-->
+                    </execution>
+                    <execution>
+                        <id>jar-api</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classesDirectory>${project.build.outputDirectory}/net.aschemann.maven.demos.analyzer.api</classesDirectory>
+                            <classifier>api</classifier>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>jar-core</id>
