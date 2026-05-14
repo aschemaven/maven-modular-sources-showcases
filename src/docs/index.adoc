@@ -15,6 +15,7 @@ A blog series exploring Java Modules with Apache Maven 4's new module source hie
 . xref:02-modular-basics-homework.adoc[Solving Resource and Packaging Challenges]
 . xref:03-encapsulation.adoc[Encapsulation – Hiding Implementation Details]
 . xref:04-api-and-implementation.adoc[Separating contract and implementation]
+. xref:05-services.adoc[Services — inversion of control with ServiceLoader]
 
 The full rendered site with all articles lives at https://maven.aschemann.net/blog/.
 

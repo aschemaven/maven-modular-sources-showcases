@@ -1,16 +1,19 @@
 package net.aschemann.maven.demos.analyzer.cli;
 
+import net.aschemann.maven.demos.analyzer.api.AnalyzerService;
 import net.aschemann.maven.demos.analyzer.api.Document;
 import net.aschemann.maven.demos.analyzer.api.Statistics;
-import net.aschemann.maven.demos.analyzer.core.service.TextAnalyzer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 
 /**
@@ -49,13 +52,19 @@ public class AnalyzerCommand implements Callable<Integer> {
     )
     private boolean quiet;
 
+    // tag::call[]
     @Override
     public Integer call() {
         try {
-            Document document = Document.fromPath(file);
+            String content = Files.readString(file, StandardCharsets.UTF_8); // <1>
+            Document document = new Document(file, content);
 
-            TextAnalyzer analyzer = new TextAnalyzer(topWords);
-            Statistics stats = analyzer.analyze(document);
+            AnalyzerService analyzer = ServiceLoader.load(AnalyzerService.class) // <2>
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException(
+                            "No AnalyzerService implementation found on the module path"));
+
+            Statistics stats = analyzer.analyze(document); // <3>
 
             printResults(stats);
             return 0;
@@ -65,6 +74,7 @@ public class AnalyzerCommand implements Callable<Integer> {
             return 1;
         }
     }
+    // end::call[]
 
     private void printResults(Statistics stats) {
         if (quiet) {

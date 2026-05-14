@@ -1,5 +1,6 @@
 package net.aschemann.maven.demos.analyzer.core.service;
 
+import net.aschemann.maven.demos.analyzer.api.AnalyzerService;
 import net.aschemann.maven.demos.analyzer.api.Document;
 import net.aschemann.maven.demos.analyzer.api.Statistics;
 // tag::import-internal[]
@@ -15,29 +16,28 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+// tag::class[]
 /**
- * Service for analyzing text documents.
+ * Default implementation of {@link AnalyzerService}.
+ * Provides comprehensive text analysis with word frequency tracking.
  */
-public class TextAnalyzer {
+public class DefaultTextAnalyzer implements AnalyzerService { // <1>
 
-    private static final Logger LOG = LogManager.getLogger(TextAnalyzer.class);
+    private static final Logger LOG = LogManager.getLogger(DefaultTextAnalyzer.class);
+
+    private static final int DEFAULT_TOP_WORDS_LIMIT = 10;
 
     private final int topWordsLimit;
 
-    public TextAnalyzer() {
-        this(10);
+    public DefaultTextAnalyzer() {
+        this(DEFAULT_TOP_WORDS_LIMIT);
     }
 
-    public TextAnalyzer(int topWordsLimit) {
+    public DefaultTextAnalyzer(int topWordsLimit) {
         this.topWordsLimit = topWordsLimit;
     }
 
-    /**
-     * Analyzes the given document and returns statistics.
-     *
-     * @param document the document to analyze
-     * @return the analysis statistics
-     */
+    @Override // <2>
     public Statistics analyze(Document document) {
         LOG.info("Analyzing document: {}", document.path());
 
@@ -77,5 +77,6 @@ public class TextAnalyzer {
                 topWords
         );
     }
+// end::class[]
 
 }

@@ -11,7 +11,7 @@ This repository contains companion code for a blog series about Java Modules wit
 
 == Blog Articles
 
-The series consists of four articles.
+The series consists of five articles.
 Each article lives on the branch where the code at that state is available, so `git checkout <branch>` gives you a working tree with both the article and runnable code.
 
 [cols="1,3",options="header"]
@@ -29,6 +29,9 @@ Each article lives on the branch where the code at that state is available, so `
 
 | `blog-3-api-impl`
 | xref:src/docs/04-api-and-implementation.adoc[Separating contract and implementation]
+
+| `blog-4-services`
+| xref:src/docs/05-services.adoc[Services &#8211; inversion of control with ServiceLoader]
 |===
 
 The full rendered site with all articles lives at https://maven.aschemann.net/blog/.

@@ -9,6 +9,9 @@ module net.aschemann.maven.demos.analyzer.core {
     requires org.apache.logging.log4j; // <2>
 
     exports net.aschemann.maven.demos.analyzer.core.service; // <3>
-    // Note: net.aschemann.maven.demos.analyzer.core.internal is NOT exported // <4>
+    // Note: net.aschemann.maven.demos.analyzer.core.internal is NOT exported
+
+    provides net.aschemann.maven.demos.analyzer.api.AnalyzerService
+        with net.aschemann.maven.demos.analyzer.core.service.DefaultTextAnalyzer; // <4>
 }
 // end::module-info[]
