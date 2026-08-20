@@ -114,57 +114,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- tag::jar[] -->
             <!--
-                WORKAROUND: Explicit JAR creation until Maven Core PR 11549 and JAR Plugin PR 508 are released.
-                See: https://github.com/apache/maven/pull/11549
+                With JAR Plugin PR 508 the Maven 4 module source hierarchy is packaged into one
+                properly-named JAR per module automatically (analyzer.api / .core / .cli), replacing
+                the explicit per-module executions and classifiers of the earlier workaround.
+                Uses a pre-release SNAPSHOT until PR 508 is released.
                 See: https://github.com/apache/maven-jar-plugin/pull/508
             -->
-            <!-- tag::jar-workaround[] -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>none</phase> <!--1-->
-                    </execution>
-                    <execution>
-                        <id>jar-api</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classesDirectory>${project.build.outputDirectory}/net.aschemann.maven.demos.analyzer.api</classesDirectory>
-                            <classifier>api</classifier>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jar-core</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classesDirectory>${project.build.outputDirectory}/net.aschemann.maven.demos.analyzer.core</classesDirectory> <!--2-->
-                            <classifier>core</classifier> <!--3-->
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jar-cli</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classesDirectory>${project.build.outputDirectory}/net.aschemann.maven.demos.analyzer.cli</classesDirectory>
-                            <classifier>cli</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
+                <version>4.0.0-beta-2-SNAPSHOT</version>
             </plugin>
-            <!-- end::jar-workaround[] -->
+            <!-- end::jar[] -->
         </plugins>
     </build>
 </project>
