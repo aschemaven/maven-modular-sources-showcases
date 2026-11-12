@@ -1,88 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.1.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0
-                             http://maven.apache.org/xsd/maven-4.1.0.xsd"
-         root="true">
-    <modelVersion>4.1.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!--
+      This branch carries no code on purpose. It is the index of the series.
+      The POM exists only so that a reflexive "clone and build" stops with an
+      explanation instead of silently building the wrong state.
+
+      modelVersion 4.0.0 (not 4.1.0) is deliberate: the message has to appear
+      on Maven 3 as well, which would otherwise reject the model and report
+      something unrelated.
+    -->
+    <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.aschemann.maven.demos</groupId>
-    <artifactId>analyzer</artifactId>
+    <artifactId>analyzer-index</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>Text Analyzer</name>
-    <description>A modular text analyzer demonstrating Java Modules (JPMS) with Maven 4</description>
+    <name>Java Modules Showcases - branch index</name>
+    <description>Pointer to the branch holding the code for each article.</description>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>17</maven.compiler.release>
-
-        <!-- Dependency versions -->
-        <log4j.version>2.24.3</log4j.version>
-        <picocli.version>4.7.7</picocli.version>
-
-        <!-- Plugin versions -->
-        <maven-compiler-plugin.version>4.0.0-beta-3</maven-compiler-plugin.version>
-        <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
+        <maven-enforcer-plugin.version>3.7.0</maven-enforcer-plugin.version>
     </properties>
 
-    <dependencies>
-        <!-- Log4j 2.x (modular) -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Picocli for CLI (modular) -->
-        <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
-            <version>${picocli.version}</version>
-        </dependency>
-    </dependencies>
-
     <build>
-        <!-- tag::sources[] -->
-        <sources>
-            <source>
-                <module>net.aschemann.maven.demos.analyzer.core</module> <!--1-->
-            </source>
-            <source>
-                <module>net.aschemann.maven.demos.analyzer.cli</module> <!--2-->
-            </source>
-        </sources>
-        <!-- end::sources[] -->
-
+        <!-- A bare ./mvnw must hit the message too, not Maven's own
+             "you must specify at least one goal" error. -->
+        <defaultGoal>validate</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${maven-dependency-plugin.version}</version>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
+                        <id>point-at-the-article-branches</id>
                         <goals>
-                            <goal>copy-dependencies</goal>
+                            <goal>enforce</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <rules>
+                                <alwaysFail>
+                                    <message>
+There is no code on this branch.
+
+Every article in the series has its own branch, holding exactly the code
+that article describes. Pick the one for the article you are reading:
+
+  git checkout blog-1-basics        Your First Modular Java Project with Apache Maven 4
+  git checkout blog-1-homework      Solving Resource and Packaging Challenges
+  git checkout blog-2-encapsulation Encapsulation - Hiding Implementation Details
+  git checkout blog-3-api-impl      Separating contract and implementation
+  git checkout blog-4-services      Services - inversion of control with ServiceLoader
+  git checkout javapro-1            Modular Java Applications with Apache Maven 4 (JAVAPRO)
+
+Then run the build again. README.adoc on this branch has the links.
+
+The states differ in what they demonstrate, not in maturity, so there is no
+"newest" one to default to - which is why this branch builds nothing.
+                                    </message>
+                                </alwaysFail>
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
 </project>
