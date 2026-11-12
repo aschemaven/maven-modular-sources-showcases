@@ -40,10 +40,10 @@ The full rendered site with all articles lives at https://maven.aschemann.net/bl
 
 == Magazine Article
 
-The branch `javapro-1` carries the code for the JAVAPRO article _Modular Java Applications with Apache Maven 4_, scheduled for 2026-11-12.
+The branch `javapro-1` carries the code for the JAVAPRO article _Modular Java Applications with Apache Maven 4_, published on 2026-11-12.
 It condenses the first four articles of the blog series into a single piece.
 The code differs from the blog branches in `pom.xml` only: with Maven 4.0.0-rc-7 and maven-jar-plugin 4.0.0-beta-2 the resource and packaging configuration of the earlier articles is no longer needed.
-A link to the published article will follow.
+Read it at https://javapro.io/2026/11/12/modular-java-applications-with-apache-maven-4/[javapro.io].
 
 == Layout
 
