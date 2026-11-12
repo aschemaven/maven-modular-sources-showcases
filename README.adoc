@@ -6,51 +6,47 @@ ifdef::env-github[]
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
+:icons: font
 
-This repository contains companion code for a blog series about Java Modules with https://maven.apache.org/[Apache Maven] 4's new _module source hierarchy_.
+This repository holds the sample code accompanying publications about Java Modules with https://maven.apache.org/[Apache Maven] 4, across different media.
 
-== Blog Articles
+[CAUTION]
+====
+You are on branch `blog-2-encapsulation`.
+It carries the code for the article _https://maven.aschemann.net/blog/2026/03/12/encapsulation/[Encapsulation - Hiding Implementation Details]_.
 
-The series consists of four articles.
-Each article lives on the branch where the code at that state is available, so `git checkout <branch>` gives you a working tree with both the article and runnable code.
+Every publication has its own branch, and the code differs between them.
+The https://github.com/aschemaven/maven-modular-sources-showcases/blob/main/README.adoc[`main` branch] lists them all, with a link to each article.
+====
 
-[cols="1,3",options="header"]
-|===
-| Branch | Article
+== What this state shows
 
-| `main`
-| xref:src/docs/01-modular-basics.adoc[Your First Modular Java Project with Apache Maven 4]
+A text analyzer as two Java modules whose boundary the compiler enforces.
 
-| `blog-1-homework`
-| xref:src/docs/02-modular-basics-homework.adoc[Solving Resource and Packaging Challenges]
-
-| `blog-2-encapsulation`
-| xref:src/docs/03-encapsulation.adoc[Encapsulation &#8211; Hiding Implementation Details]
-
-| `blog-3-api-impl`
-| Separating contract and implementation
-|===
-
-The full rendered site with all articles lives at https://maven.aschemann.net/blog/.
+The core module exports its `model` and `service` packages and deliberately does not export `internal`.
+Its `TextNormalizer` therefore stays unreachable from the command-line module, although both are built from the same POM and sit on the same module path: encapsulation that a reviewer no longer has to watch for.
 
 == Layout
 
 [source]
 ----
 src/
-├── net.aschemann.maven.demos.analyzer.core/   Java module: domain model + services
-├── net.aschemann.maven.demos.analyzer.cli/    Java module: command-line interface
-└── docs/                                       AsciiDoc blog articles (one file per article)
+├── net.aschemann.maven.demos.analyzer.core/    Java module: domain model + services
+└── net.aschemann.maven.demos.analyzer.cli/     Java module: command-line interface
 pom.xml                                         Maven 4 module source hierarchy
 ----
-
-Blog articles use `include::` directives to pull tagged regions directly from the real source files (`pom.xml`, `module-info.java`, etc.), so what you read in the article always matches the code you can compile and run.
 
 == Building
 
 [source,bash]
 ----
-./mvnw compile
+./mvnw package
+----
+
+To run it against a text file, here its own README:
+
+[source,bash]
+----
 ./mvnw prepare-package
 java --module-path "target/classes:target/lib" \
      --module net.aschemann.maven.demos.analyzer.cli/net.aschemann.maven.demos.analyzer.cli.AnalyzerCommand \
@@ -59,7 +55,7 @@ java --module-path "target/classes:target/lib" \
 
 == License
 
-Apache License 2.0
+Apache License 2.0, see link:LICENSE[LICENSE].
 
 '''
 
